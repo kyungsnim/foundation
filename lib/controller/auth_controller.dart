@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:foundation/models/user_model.dart';
 import 'package:foundation/views/home.dart';
 import 'package:foundation/views/sign_in.dart';
 import 'package:foundation/widgets/loading.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends GetxController {
   static AuthController to = Get.find();
@@ -15,12 +18,17 @@ class AuthController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  final GoogleSignIn googleSignIn = new GoogleSignIn();
+  final userReference =
+      FirebaseFirestore.instance.collection('Users'); // 사용자 정보 저장을 위한 ref
+  final firestoreReference = FirebaseFirestore.instance; // batch 사용을 위한 선언
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   @override
   void onReady() async {
     //run every time auth state changes
+    // await FlutterSecureStorage().deleteAll();
     ever(firebaseUser, handleAuthChanged);
 
     firebaseUser.bindStream(user);
@@ -49,7 +57,7 @@ class AuthController extends GetxController {
     print('streamFirestoreUser()');
 
     return _db
-        .doc('/users/${firebaseUser.value!.uid}')
+        .doc('/Users/${firebaseUser.value!.uid}')
         .snapshots()
         .map((snapshot) => UserModel.fromMap(snapshot.data()!));
   }
@@ -65,7 +73,7 @@ class AuthController extends GetxController {
     try {
       await _auth
           .createUserWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text)
+              email: emailController.text, password: passwordController.text)
           .then((result) async {
         print('uID: ' + result.user!.uid.toString());
         print('email: ' + result.user!.email.toString());
@@ -99,8 +107,9 @@ class AuthController extends GetxController {
 
         //create the new user object
         UserModel _newUser = UserModel(
-            uid: result.user!.uid,
-            name: nameController.text,
+          uid: result.user!.uid,
+          profileName: nameController.text,
+          email: emailController.text,
         );
         // create the user in firestore
         _createUserFirestore(_newUser, result.user!);
@@ -109,7 +118,7 @@ class AuthController extends GetxController {
         hideLoadingIndicator();
       });
     } on FirebaseAuthException catch (error) {
-      // hideLoadingIndicator();
+      hideLoadingIndicator();
       Get.snackbar('auth.signUpErrorTitle'.tr, error.message!,
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 10),
@@ -120,7 +129,7 @@ class AuthController extends GetxController {
 
   //create the firestore user in users collection
   void _createUserFirestore(user, User _firebaseUser) {
-    _db.doc('/users/${_firebaseUser.uid}').set(user.toJson());
+    _db.doc('/Users/${_firebaseUser.uid}').set(user.toJson());
     update();
   }
 
@@ -141,6 +150,114 @@ class AuthController extends GetxController {
           duration: Duration(seconds: 7),
           backgroundColor: Get.theme.snackBarTheme.backgroundColor,
           colorText: Get.theme.snackBarTheme.actionTextColor);
+    }
+  }
+
+  //handles updating the user when updating profile
+  Future<void> updateUser(BuildContext context, UserModel user, String oldEmail,
+      String password) async {
+    String _authUpdateUserNoticeTitle = 'auth.updateUserSuccessNoticeTitle'.tr;
+    String _authUpdateUserNotice = 'auth.updateUserSuccessNotice'.tr;
+
+    try {
+      showLoadingIndicator();
+      try {
+        await _auth
+            .signInWithEmailAndPassword(email: oldEmail, password: password)
+            .then((_firebaseUser) {
+          _firebaseUser.user!
+              .updateEmail(user.email)
+              .then((value) => _updateUserFirestore(user, _firebaseUser.user!));
+        });
+      } catch (err) {
+        print('Caught error: $err');
+        //not yet working, see this issue https://github.com/delay/make_destiny/issues/21
+        if (err ==
+            "Error: [firebase_auth/email-already-in-use] The email address is already in use by another account.") {
+          _authUpdateUserNoticeTitle = 'auth.updateUserEmailInUse'.tr;
+          _authUpdateUserNotice = 'auth.updateUserEmailInUse'.tr;
+        } else {
+          _authUpdateUserNoticeTitle = 'auth.wrongPasswordNotice'.tr;
+          _authUpdateUserNotice = 'auth.wrongPasswordNotice'.tr;
+        }
+      }
+      hideLoadingIndicator();
+      Get.snackbar(_authUpdateUserNoticeTitle, _authUpdateUserNotice,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 5),
+          backgroundColor: Get.theme.snackBarTheme.backgroundColor,
+          colorText: Get.theme.snackBarTheme.actionTextColor);
+    } on PlatformException catch (error) {
+      //List<String> errors = error.toString().split(',');
+      // print("Error: " + errors[1]);
+      hideLoadingIndicator();
+      print(error.code);
+      String authError;
+      switch (error.code) {
+        case 'ERROR_WRONG_PASSWORD':
+          authError = 'auth.wrongPasswordNotice'.tr;
+          break;
+        default:
+          authError = 'auth.unknownError'.tr;
+          break;
+      }
+      Get.snackbar('auth.wrongPasswordNoticeTitle'.tr, authError,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 10),
+          backgroundColor: Get.theme.snackBarTheme.backgroundColor,
+          colorText: Get.theme.snackBarTheme.actionTextColor);
+    }
+  }
+
+  //updates the firestore user in users collection
+  void _updateUserFirestore(UserModel user, User _firebaseUser) {
+    _db.doc('/Users/${_firebaseUser.uid}').update(user.toJson());
+    update();
+  }
+
+  signInWithGoogle() async {
+    try {
+      // final GoogleSignInAccount? account = await googleSignIn.signIn();
+      /// 구글 로그인 수행
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      /// 로그인 요청의 인증 관련 세부 정보 얻기
+      final GoogleSignInAuthentication googleSignInAuthentication =
+      await googleSignInAccount!.authentication;
+      /// 자격 증명 생성하기
+      final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken);
+
+      /// FirebaseAuth의 signInWithCredential을 통해 UserCredential을 얻는다.
+      /// SNS로그인의 경우 최종 과정에서 해당 UserCredential을 얻어 사용자 정보를 획득해야 한다.
+      _auth.signInWithCredential(credential).then((authResult) async {
+        // firebaseUser = authResult.user as Rxn<User>;
+        /// 해당 사용자 정보를 통해 기존 DB에 저장된 정보를 확인
+        DocumentSnapshot documentSnapshot =
+            await userReference.doc(authResult.user!.uid).get();
+
+        /// 해당 유저의 db정보가 없다면
+        if (!documentSnapshot.exists) {
+          /// 유저정보 셋팅된 값으로 db에 set
+          userReference.doc(authResult.user!.uid).set({
+            'uid': authResult.user!.uid,
+            'profileName': authResult.user!.displayName,//gCurrentUser!.displayName,
+            'url': authResult.user!.photoURL,//gCurrentUser.photoUrl,
+            'email': authResult.user!.email,//gCurrentUser.email
+            'createdAt': DateTime.now(),
+            'loginType': "Google"
+          });
+        } else {
+          /// 기존에 저장된 값이 있다면 로그인 시간만 갱신
+          userReference
+              .doc(authResult.user!.uid)
+              .update({'loginType': "Google", 'loggedInAt': DateTime.now()});
+        }
+
+      });
+      await FlutterSecureStorage().write(key: "loginType", value: 'Google');
+    } catch (e) {
+      print(e.toString());
     }
   }
 

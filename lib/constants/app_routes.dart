@@ -8,5 +8,6 @@ class AppRoutes {
     GetPage(name: '/', page: () => Home()),
     GetPage(name: '/signin', page: () => SignIn()),
     GetPage(name: '/signup', page: () => SignUp()),
+    GetPage(name: '/edit_info', page: () => EditInfo()),
   ];
 }

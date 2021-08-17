@@ -1,15 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:foundation/controller/auth_controller.dart';
-import 'package:foundation/views/sign_in.dart';
 import 'package:get/get.dart';
 
 import 'constants/app_routes.dart';
+import 'controller/controllers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Get.put<AuthController>(AuthController());
+  Get.put<AuthController>(AuthController());
+  Get.put<ThemeController>(ThemeController());
+  Get.put<LanguageController>(LanguageController());
   runApp(MyApp());
 }
 

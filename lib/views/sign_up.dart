@@ -74,7 +74,7 @@ class SignUp extends StatelessWidget {
                     FormVerticalSpace(),
                     LabelButton(
                       labelText: '이미 계정이 있으신가요? (로그인 화면으로 이동)',
-                      onPressed: () => Get.to(SignIn()),
+                      onPressed: () => Get.to(() => SignIn()),
                     ),
                   ],
                 ),
