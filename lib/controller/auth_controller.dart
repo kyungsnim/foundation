@@ -17,10 +17,17 @@ class AuthController extends GetxController {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController phoneNumberController1 = TextEditingController();
+  TextEditingController phoneNumberController2 = TextEditingController();
+  TextEditingController otpController = TextEditingController();
+
+  bool authOk = false;
+  String verificationId = '';
+  bool requestedAuth = false;
 
   final GoogleSignIn googleSignIn = new GoogleSignIn();
   final userReference =
-      FirebaseFirestore.instance.collection('Users'); // 사용자 정보 저장을 위한 ref
+  FirebaseFirestore.instance.collection('Users'); // 사용자 정보 저장을 위한 ref
   final firestoreReference = FirebaseFirestore.instance; // batch 사용을 위한 선언
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -40,6 +47,8 @@ class AuthController extends GetxController {
     // get user data from firestore
     if (_firebaseUser?.uid != null) {
       firestoreUser.bindStream(streamFirestoreUser());
+      /// 최종 로그인 시간 변경
+      // updateWhenLoggedIn(_firebaseUser);
       // await isAdmin();
     }
 
@@ -73,7 +82,7 @@ class AuthController extends GetxController {
     try {
       await _auth
           .createUserWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
+          email: emailController.text, password: passwordController.text)
           .then((result) async {
         print('uID: ' + result.user!.uid.toString());
         print('email: ' + result.user!.email.toString());
@@ -219,10 +228,13 @@ class AuthController extends GetxController {
     try {
       // final GoogleSignInAccount? account = await googleSignIn.signIn();
       /// 구글 로그인 수행
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn
+          .signIn();
+
       /// 로그인 요청의 인증 관련 세부 정보 얻기
       final GoogleSignInAuthentication googleSignInAuthentication =
       await googleSignInAccount!.authentication;
+
       /// 자격 증명 생성하기
       final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
@@ -234,18 +246,22 @@ class AuthController extends GetxController {
         // firebaseUser = authResult.user as Rxn<User>;
         /// 해당 사용자 정보를 통해 기존 DB에 저장된 정보를 확인
         DocumentSnapshot documentSnapshot =
-            await userReference.doc(authResult.user!.uid).get();
+        await userReference.doc(authResult.user!.uid).get();
 
         /// 해당 유저의 db정보가 없다면
         if (!documentSnapshot.exists) {
           /// 유저정보 셋팅된 값으로 db에 set
           userReference.doc(authResult.user!.uid).set({
             'uid': authResult.user!.uid,
-            'profileName': authResult.user!.displayName,//gCurrentUser!.displayName,
-            'url': authResult.user!.photoURL,//gCurrentUser.photoUrl,
-            'email': authResult.user!.email,//gCurrentUser.email
+            'profileName': authResult.user!.displayName,
+            //gCurrentUser!.displayName,
+            'url': authResult.user!.photoURL,
+            //gCurrentUser.photoUrl,
+            'email': authResult.user!.email,
+            //gCurrentUser.email
             'createdAt': DateTime.now(),
-            'loginType': "Google"
+            'loginType': "Google",
+            "phoneAuthOk": false,
           });
         } else {
           /// 기존에 저장된 값이 있다면 로그인 시간만 갱신
@@ -253,12 +269,48 @@ class AuthController extends GetxController {
               .doc(authResult.user!.uid)
               .update({'loginType': "Google", 'loggedInAt': DateTime.now()});
         }
-
       });
       await FlutterSecureStorage().write(key: "loginType", value: 'Google');
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  void verifyWithPhoneNumber({required phoneNumber, required verificationCompleted, required codeAutoRetrievalTimeout, required verificationFailed, required codeSent, required Duration timeout}) async {
+    _auth.verifyPhoneNumber(phoneNumber: phoneNumber,
+        verificationCompleted: verificationCompleted,
+        verificationFailed: verificationFailed,
+        codeSent: codeSent,
+        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+  }
+
+  void signInWithPhoneAuthCredential(
+      PhoneAuthCredential phoneAuthCredential) async {
+    // showLoadingIndicator();
+    try {
+      final authCredential = await _auth.signInWithCredential(
+          phoneAuthCredential);
+      // hideLoadingIndicator();
+
+      if (authCredential.user != null) {
+        authOk = true;
+        userReference
+            .doc(firestoreUser.value!.uid)
+            .update({'phoneAuthOk': true,});
+        // await _auth.currentUser!.delete();
+        // _auth.signOut();
+      } else {
+        print('올바른 인증코드가 아닙니다.');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  updateWhenLoggedIn(User _firebaseUser) async {
+    await userReference
+        .doc(_firebaseUser.uid)
+        .update({'loggedInAt': DateTime.now()});
   }
 
   // Sign out
