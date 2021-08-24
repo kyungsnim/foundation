@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,25 +6,13 @@ class NoticeController extends GetxController {
   static NoticeController to = Get.find();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  Rx<String> _title = ''.obs;
-  Rx<String> _description = ''.obs;
-  DateTime createdDt = DateTime.now();
-  // Rx<bool> processing = false.obs;
+  WriteBatch writeBatch = FirebaseFirestore.instance.batch();
+
   bool isLoading = false;
 
-  setTitle() {
-    _title = titleController.text as Rx<String>;
-    update();
+  void addNotice(String noticeId, Map<String, dynamic> noticeData) {
+    writeBatch.set(
+        FirebaseFirestore.instance.collection('Notice').doc(noticeId), noticeData);
+    writeBatch.commit();
   }
-
-  setDescription() {
-    _description = descriptionController.text as Rx<String>;
-    update();
-  }
-
-  void setLoading() {
-    isLoading = !isLoading;
-    update();
-  }
-
 }

@@ -58,21 +58,28 @@ class _NoticeState extends State<Notice> {
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(builder: (_) {
       return Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: Scrollbar(
-                child: ListView(
-                  controller: _scrollController,
-                  children: [
-                    _buildBody(context),
-                  ],
+        appBar: AppBar(
+          title: Text('Notice'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: Scrollbar(
+                  child: ListView(
+                    controller: _scrollController,
+                    children: [
+                      _buildBody(context),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
           onPressed: () {
             Get.toNamed('add_notice');
           },
@@ -115,12 +122,12 @@ class _NoticeState extends State<Notice> {
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           border: Border.all(color: Colors.grey.withOpacity(0.6)),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 0), blurRadius: 5, color: Colors.black38)
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //       offset: Offset(0, 0), blurRadius: 5, color: Colors.black38)
+          // ],
         ),
         child: ListTile(
           title: Stack(children: [

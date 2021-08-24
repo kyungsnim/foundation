@@ -28,7 +28,7 @@ class ChatController extends GetxController {
         .collection('ChatRoom')
         .doc(roomId)
         .collection('Chats')
-        .orderBy('sendDt')
+        .orderBy('sendDt', descending: true) /// 채팅창 최신이 가장 아래로 오도록
         .snapshots();
     update();
   }
