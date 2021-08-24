@@ -4,3 +4,6 @@ export 'sign_up.dart';
 export 'edit_info.dart';
 export 'phone_auth.dart';
 export 'chat_room.dart';
+export 'basic_course.dart';
+export 'notice.dart';
+export 'add_notice.dart';

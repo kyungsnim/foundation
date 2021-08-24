@@ -24,6 +24,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  expandable: ^5.0.1 # 펼치기 기능
+  loading_indicator: ^3.0.1 # loading icon
   get: ^4.3.4
   get_storage: ^2.0.2
 #  toast:

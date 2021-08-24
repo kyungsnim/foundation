@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder(() {
         Get.put(AuthController());
         Get.put(ChatController());
+        Get.put(NoticeController());
       }),
       title: 'Flutter Demo',
       theme: ThemeData.dark(),

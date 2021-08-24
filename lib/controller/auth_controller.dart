@@ -39,7 +39,7 @@ class AuthController extends GetxController {
     ever(firebaseUser, handleAuthChanged);
 
     firebaseUser.bindStream(user);
-
+    update();
     super.onReady();
   }
 

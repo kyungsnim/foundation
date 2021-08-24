@@ -10,13 +10,15 @@ import 'views.dart';
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // final authController = AuthController.to;
+
     return GetBuilder<AuthController>(
-        // init: AuthController(),
-        builder: (controller) =>
+        init: AuthController(),
+        builder: (authController) =>
         // controller.firebaseUser == null
         //     ? Center(child: CircularProgressIndicator())
         //     :
-        controller.firestoreUser.value == null
+        authController.firebaseUser.value == null
                 ? Center(child: CircularProgressIndicator())
                 :
         Scaffold(
@@ -27,15 +29,20 @@ class Home extends StatelessWidget {
                               child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Obx(() => Text(controller.firestoreUser.value!.uid),),
-                          Obx(() => Text(controller.firestoreUser.value!.profileName),),
-                          Obx(() => Text(controller.firestoreUser.value!.email),),
+                          // authController.firebaseUser.value == null ? Container() : Obx(() =>Text(authController.firebaseUser.value!.uid),),
+                          // authController == null || authController.firebaseUser.value == null ? Container() : Obx(() => Text(authController.firebaseUser.value!.email!),),
+                          // FormVerticalSpace(),
+                          PrimaryButton(labelText: '기초 학습', onPressed: () => Get.toNamed('basic_course'),),
+                          FormVerticalSpace(),
+                          PrimaryButton(labelText: '공지 사항', onPressed: () => Get.toNamed('notice'),),
                           FormVerticalSpace(),
                           PrimaryButton(labelText: '정보 수정', onPressed: () => Get.toNamed('edit_info'),),
                           FormVerticalSpace(),
                           PrimaryButton(labelText: '휴대폰 인증', onPressed: () => Get.toNamed('phone_auth'),),
                           FormVerticalSpace(),
                           PrimaryButton(labelText: '실시간 채팅', onPressed: () => Get.toNamed('chat_room'),),
+                          FormVerticalSpace(),
+                          PrimaryButton(labelText: '문의 사항', onPressed: () => Get.toNamed('chat_room'),),
                           FormVerticalSpace(),
                           LabelButton(
                             labelText: '테마변경',
@@ -53,7 +60,7 @@ class Home extends StatelessWidget {
                           ),
                           LabelButton(
                             labelText: '로그아웃',
-                            onPressed: controller.signOut,
+                            onPressed: authController.signOut,
                           ),
                         ],
                       ),
