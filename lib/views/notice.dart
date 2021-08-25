@@ -15,7 +15,7 @@ class Notice extends StatefulWidget {
 
 class _NoticeState extends State<Notice> {
   var _lastRow = 0;
-  final FETCH_ROW = 7;
+  final FETCH_ROW = 10;
   var stream;
   var randomGenerator = Random();
   var weekDayList = ['일', '월', '화', '수', '목', '금', '토', '일'];
@@ -68,7 +68,7 @@ class _NoticeState extends State<Notice> {
               Expanded(
                 child: Scrollbar(
                   child: ListView(
-                    controller: _scrollController,
+                    // controller: _scrollController,
                     children: [
                       _buildBody(context),
                     ],
@@ -124,188 +124,77 @@ class _NoticeState extends State<Notice> {
         decoration: BoxDecoration(
           // color: Colors.white,
           border: Border.all(color: Colors.grey.withOpacity(0.6)),
-          // boxShadow: [
-          //   BoxShadow(
-          //       offset: Offset(0, 0), blurRadius: 5, color: Colors.black38)
-          // ],
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0, 0), blurRadius: 5, color: Colors.white10)
+          ],
         ),
         child: ListTile(
           title: Stack(children: [
-            Positioned(
-              right: 5,
-              top: 20,
-              child: Text(
-                '${notice.createdAt.toString().substring(0, 10)}(${weekDayList[notice.createdAt.weekday]})',
-                style: TextStyle(
-                    fontFamily: 'SLEIGothic', color: Colors.grey, fontSize: 12),
-              ),
-            ),
             Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 // height: 200,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 20),
-                          Stack(children: [
+                child: notice.title != null
+                    ? ExpandablePanel(
+                        header: RichText(
+                            text: TextSpan(
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15),
+                                children: [
+                              TextSpan(
+                                text: notice.title,
+                              ),
+                              TextSpan(text: '   '),
+                              TextSpan(
+                                style: TextStyle(fontWeight: FontWeight.w400, color: Colors.grey, fontSize: 12),
+                                  text:
+                                      ' ${notice.createdAt.toString().substring(0, 10)}(${weekDayList[notice.createdAt.weekday]})')
+                            ])),
+                        collapsed: Text(notice.description,
+                            softWrap: true,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
+                        expanded: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// 내용
                             Text(
-                              '${notice.writer}',
-                              style: TextStyle(fontFamily: 'SLEIGothic'),
-                            ),
-                          ])
-                          // 이 뿐 name, grade 로 변경돼야
-                        ],
-                      ),
-                    ),
-                    Divider(
-                      thickness: 1,
-                    ),
-                    Row(
-                      children: [
-                        // InkWell(
-                        //   onTap: () {
-                        //     // 좋아요 누르지 않은 경우 빨간 하트로 바꾸고 좋아요+1 해줘야 함
-                        //     // 좋아요 리스트에 내가 없는 경우
-                        //     // if (notice.likeList != null &&
-                        //     //     !notice.likeList.contains(currentUser.email)) {
-                        //     //   FirebaseFirestore.instance
-                        //     //       // ignore: missing_return
-                        //     //       .runTransaction((transaction) {
-                        //     //     var ref = noticeDbRef.doc(notice.id);
-                        //     //     Future<DocumentSnapshot> doc =
-                        //     //         transaction.get(ref);
-                        //     //     // transaction.update(ref, {'like' : diary.like + 1});
-                        //     //
-                        //     //     var addLikeList = [];
-                        //     //     // 좋아요 수는 0보다 큰데 내가 아직 좋아요 안눌렀을 때
-                        //     //     if (notice.likeList != null &&
-                        //     //         !notice.likeList
-                        //     //             .contains(currentUser.email)) {
-                        //     //       notice.likeList.add(currentUser.email);
-                        //     //       addLikeList = notice.likeList;
-                        //     //     } // 좋아요 클릭이 최초인 경우
-                        //     //     else {
-                        //     //       addLikeList.add(currentUser.email);
-                        //     //       print(addLikeList);
-                        //     //     }
-                        //     //     transaction
-                        //     //         .update(ref, {'likeList': addLikeList});
-                        //     //   });
-                        //     // }
-                        //     // // 이미 좋아요 누른 경우 또 누르면 빈 하트로 바꾸고 좋아요-1 해줘야 함
-                        //     // else {
-                        //     //   FirebaseFirestore.instance
-                        //     //       .runTransaction((transaction) {
-                        //     //     var ref = noticeDbRef.doc(notice.id);
-                        //     //     var deletedLikeList = [];
-                        //     //     if (notice.likeList != null &&
-                        //     //         notice.likeList
-                        //     //             .contains(currentUser.email)) {
-                        //     //       int index =
-                        //     //           notice.likeList.indexOf(currentUser.email);
-                        //     //       notice.likeList.removeAt(index);
-                        //     //       deletedLikeList = notice.likeList;
-                        //     //
-                        //     //       transaction.update(
-                        //     //           ref, {'likeList': deletedLikeList});
-                        //     //     }
-                        //     //   });
-                        //     // }
-                        //   },
-                        //   child: Container(
-                        //       width: MediaQuery.of(context).size.width * 0.1,
-                        //       height: MediaQuery.of(context).size.width * 0.1,
-                        //       // 좋아요 리스트에 내가 있는지 없는지 보고 아이콘 달리 보여주기
-                        //       child: notice.likeList != null &&
-                        //               notice.likeList.contains(currentUser.email)
-                        //           ? Icon(Icons.favorite,
-                        //               size: MediaQuery.of(context).size.width *
-                        //                   0.08,
-                        //               color: Colors.redAccent)
-                        //           : Icon(Icons.favorite_border,
-                        //               size: MediaQuery.of(context).size.width *
-                        //                   0.08,
-                        //               color: Colors.black87)),
-                        // ),
-                        // SizedBox(width: 5),
-                        // notice.likeList != null && notice.likeList.length > 1
-                        //     ? InkWell(
-                        //         onTap: () => likeListPopup(notice),
-                        //         child: Row(
-                        //           children: [
-                        //             Text(
-                        //                 '${notice.likeList[0].toString()}님 외 ${(notice.likeList.length - 1).toString()}명이 좋아합니다.',
-                        //                 style: TextStyle(
-                        //                     fontFamily: 'SLEIGothin',
-                        //                     fontSize: 11)),
-                        //           ],
-                        //         ),
-                        //       )
-                        //     : notice.likeList.length > 0
-                        //         ? InkWell(
-                        //             onTap: () => likeListPopup(notice),
-                        //             child: Text(
-                        //                 '${notice.likeList.length.toString()}명이 좋아합니다.',
-                        //                 style: TextStyle(
-                        //                     fontFamily: 'SLEIGothin',
-                        //                     fontSize: 11)),
-                        //           )
-                        //         : Text('좋아요를 눌러보세요.',
-                        //             style: TextStyle(
-                        //                 fontFamily: 'SLEIGothin',
-                        //                 fontSize: 11)),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    notice.title != null
-                        ? ExpandablePanel(
-                            header: Text(
-                              notice.title,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            collapsed: Text(notice.description + " ...더보기",
-                                softWrap: true,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis),
-                            expanded: Text(
                               notice.description,
                               softWrap: true,
                             ),
-                          )
-                        // Expandable(
-                        //   collapsed: Text(notice.description),
-                        //   expanded: Text(notice.description),
-                        // )
-                        // ? questionAndAnswer(
-                        //     notice.title, notice.description.characters)
-                        : SizedBox(),
-                    SizedBox(height: 5),
-                  ],
-                )),
-            authController.firestoreUser.value!.email != null
-                ? Positioned(
-                    right: 5,
-                    bottom: 5,
-                    child: InkWell(
-                        onTap: () {
-                          // 관리자 게시글 삭제기능
-                          checkDeletePopup(notice);
-                        },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Icon(
-                            Icons.delete_forever_outlined,
-                            color: Colors.redAccent.withOpacity(0.8),
-                            size: 30,
-                          ),
-                        )))
-                : SizedBox(),
+                            /// 댓글
+
+
+                            /// 댓글 작성 창
+
+                            /// 관리자용 삭제버튼
+                            authController.firestoreUser.value!.email != null
+                                ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                        onTap: () {
+                                          // 관리자 게시글 삭제기능
+                                          checkDeletePopup(notice);
+                                        },
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(30)),
+                                          child: Icon(
+                                            Icons.delete_forever_outlined,
+                                            color: Colors.redAccent.withOpacity(0.8),
+                                            size: 30,
+                                          ),
+                                        )),
+                                  ],
+                                )
+                                : SizedBox(),
+                          ],
+                        ),
+                      )
+                    : SizedBox()),
+
           ]),
         ),
       ),
@@ -544,7 +433,7 @@ class _NoticeState extends State<Notice> {
     );
   }
 
-  checkDeletePopup(diary) async {
+  checkDeletePopup(notice) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -572,14 +461,14 @@ class _NoticeState extends State<Notice> {
 
                   // Feed 게시글 삭제
                   writeBatch.delete(FirebaseFirestore.instance
-                      .collection('feed')
-                      .doc(diary.id));
+                      .collection('Notice')
+                      .doc(notice.id));
 
                   // batch end
                   writeBatch.commit();
 
-                  Get.snackbar("삭제", "게시글 삭제 완료");
-                  Get.offAll("/");
+                  Navigator.pop(context);
+                  Get.snackbar("삭제", "공지사항 삭제 완료");
                 },
               ),
               TextButton(

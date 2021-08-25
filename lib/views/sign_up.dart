@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foundation/controller/auth_controller.dart';
-import 'package:foundation/views/sign_in.dart';
 import 'package:foundation/widgets/form_input_field.dart';
 import 'package:foundation/widgets/form_vertical_spacing.dart';
 import 'package:foundation/widgets/label_button.dart';
@@ -74,7 +73,7 @@ class SignUp extends StatelessWidget {
                     FormVerticalSpace(),
                     LabelButton(
                       labelText: '이미 계정이 있으신가요? (로그인 화면으로 이동)',
-                      onPressed: () => Get.to(() => SignIn()),
+                      onPressed: () => Get.back(),
                     ),
                   ],
                 ),

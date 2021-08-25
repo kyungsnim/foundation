@@ -4,7 +4,6 @@ import 'package:foundation/widgets/widgets.dart';
 import 'package:get/get.dart';
 
 class AddNotice extends StatelessWidget {
-
   TextStyle style = TextStyle(fontFamily: 'SLEIGothic', fontSize: 20.0);
   NoticeController noticeController = NoticeController.to;
   AuthController authController = AuthController.to;
@@ -24,276 +23,291 @@ class AddNotice extends StatelessWidget {
     noticeController.titleController.text = '';
     noticeController.descriptionController.text = '';
 
-    return GetBuilder<AuthController>(
-      builder: (_)  {
-        return GetBuilder<NoticeController>(
-          builder: (_) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text("Write diary"),
-              ),
-              key: _key,
-              body: !_isLoading ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Form(
-                  key: _formKey,
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: ListView(
-                      children: <Widget>[
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 8.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Flexible(
-                                    child: Container(
-                                        child: Text('제목',
-                                            style: TextStyle(
-                                                fontFamily: 'SLEIGothic',
-                                                color: Colors.lightBlue,
-                                                fontWeight: FontWeight.bold))),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 3),
-                              Container(
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width * 1,
-                                height: MediaQuery.of(context).size.height * 0.08,
-                                child: Stack(children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.symmetric(
-                                            horizontal: BorderSide(
-                                                color: Colors.black54, width: 0.5))),
-                                    width: MediaQuery.of(context).size.width * 1,
-                                    height: MediaQuery.of(context).size.height * 1,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.multiline,
-                                      maxLines: null,
-                                      // expands: true,
-                                      controller: noticeController.titleController,
-                                      cursorColor: Colors.black,
-                                      validator: (val) {
-                                        if (val!.isEmpty) {
-                                          return '제목을 입력하세요';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: '제목 입력',
-                                          hintStyle: TextStyle(
-                                              fontFamily: 'SLEIGothic', fontSize: 15)),
-                                      onChanged: (val) {
-                                        _title = val;
-                                        // update();
-                                        // setState(() {
-                                        //   _title = val;
-                                        // });
-                                      },
-                                    ),
-                                  ),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 8.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Flexible(
-                                    child: Container(
-                                        child: Text('내용',
-                                            style: TextStyle(
-                                                fontFamily: 'SLEIGothic',
-                                                color: Colors.lightBlue,
-                                                fontWeight: FontWeight.bold))),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 3),
-                              Container(
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width * 1,
-                                height: MediaQuery.of(context).size.height * 0.15,
-                                child: Stack(children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.symmetric(
-                                            horizontal: BorderSide(
-                                                color: Colors.black54, width: 0.5))),
-                                    width: MediaQuery.of(context).size.width * 1,
-                                    height: MediaQuery.of(context).size.height * 1,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.multiline,
-                                      maxLines: null,
-                                      // expands: true,
-                                      controller: noticeController.descriptionController,
-                                      cursorColor: Colors.black,
-                                      validator: (val) {
-                                        if (val!.isEmpty) {
-                                          return '내용을 입력하세요';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: '내용 입력',
-                                          hintStyle: TextStyle(
-                                              fontFamily: 'SLEIGothic', fontSize: 15)),
-                                      onChanged: (val) {
-                                        // noticeController.setDescription();
-                                        _description = noticeController.descriptionController.text;
-                                        // setState(() {
-                                        //   _content = val;
-                                        // });
-                                      },
-                                    ),
-                                  ),
-                                ]),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
+    return GetBuilder<AuthController>(builder: (_) {
+      return GetBuilder<NoticeController>(builder: (_) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Write diary"),
+          ),
+          key: _key,
+          body: !_isLoading
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: ListView(
+                        children: <Widget>[
+                          Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 8.0),
+                                horizontal: 8, vertical: 8.0),
                             child: Column(
                               children: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Container(
-                                        child: Text('작성일',
-                                            style: TextStyle(
-                                                fontFamily: 'SLEIGothic',
-                                                color: Colors.lightBlue,
-                                                fontWeight: FontWeight.bold))),
+                                    Flexible(
+                                      child: Container(
+                                          child: Text('제목',
+                                              style: TextStyle(
+                                                  fontFamily: 'SLEIGothic',
+                                                  color: Colors.lightBlue,
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                    ),
                                   ],
                                 ),
                                 SizedBox(height: 3),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.symmetric(
-                                          horizontal: BorderSide(
-                                              color: Colors.black54, width: 0.5))),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: ListTile(
-                                          title: Row(
-                                            children: [
-                                              Text(
-                                                  "${_createdAt.year}-${_createdAt.month > 10 ? _createdAt.month : '0'+_createdAt.month.toString()}-${_createdAt.day}", style: TextStyle(fontFamily: 'SLEIGothic', color: Colors.black54)),
-                                              SizedBox(width: 10),
-                                              Icon(Icons.calendar_today,
-                                                  color: Colors.lightBlue)
-                                            ],
-                                          ),
-                                          onTap: () async {
-                                            DateTime? picked = (await showDatePicker(
-                                              context: context,
-                                              initialDate: _createdAt,
-                                              firstDate: DateTime(_createdAt.year - 5),
-                                              lastDate: DateTime(_createdAt.year + 5),
-                                              builder:
-                                                  (BuildContext context, Widget? child) {
-                                                return Theme(
-                                                  data: ThemeData.light().copyWith(
-                                                    colorScheme:
-                                                    ColorScheme.light().copyWith(
-                                                      primary: Colors.lightBlue,
-                                                    ),
-                                                    buttonTheme: ButtonThemeData(
-                                                        textTheme:
-                                                        ButtonTextTheme.primary),
-                                                  ),
-                                                  child: child!,
-                                                );
-                                              },
-                                            ));
-                                            if (picked!.isAfter(DateTime.now())) {
-                                              alertNotCheckFuturePopup(context);
-                                            } else if (picked != null) {
-                                              _createdAt = picked;
-                                              // setState(() {
-                                              //   _createdAt = picked;
-                                              // });
-
-                                              //
-                                              // // 날짜 바뀌면 해당일자의 질문항목으로 채워주고 해당일자 질문 없으면 기본 질문으로 셋팅
-                                              // print(
-                                              //     '_summitDate.weekday : ${_summitDate.weekday}');
-                                              //
-                                              // switch (_summitDate.weekday) {
-                                              //   case 0:
-                                              //     sundayQuestionSetting();
-                                              //     break;
-                                              //   case 6:
-                                              //     saturdayQuestionSetting();
-                                              //     break;
-                                              //   case 7:
-                                              //     sundayQuestionSetting();
-                                              //     break;
-                                              //   default:
-                                              //     questionSetting();
-                                              //     break;
-                                              // }
-                                            }
-                                          },
-                                        ),
+                                  alignment: Alignment.center,
+                                  width: MediaQuery.of(context).size.width * 1,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.08,
+                                  child: Stack(children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.symmetric(
+                                              horizontal: BorderSide(
+                                                  color: Colors.black54,
+                                                  width: 0.5))),
+                                      width:
+                                          MediaQuery.of(context).size.width * 1,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              1,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        // expands: true,
+                                        controller:
+                                            noticeController.titleController,
+                                        cursorColor: Colors.black,
+                                        validator: (val) {
+                                          if (val!.isEmpty) {
+                                            return '제목을 입력하세요';
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: '제목 입력',
+                                            hintStyle: TextStyle(
+                                                fontFamily: 'SLEIGothic',
+                                                fontSize: 15)),
+                                        onChanged: (val) {
+                                          _title = val;
+                                          // update();
+                                          // setState(() {
+                                          //   _title = val;
+                                          // });
+                                        },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ]),
                                 ),
                               ],
-                            )),
-                        FormVerticalSpace(),
-                        PrimaryButton(labelText: '작성 완료', onPressed: () {
-                          var id = DateTime.now().millisecondsSinceEpoch.toString();
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 8.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      child: Container(
+                                          child: Text('내용',
+                                              style: TextStyle(
+                                                  fontFamily: 'SLEIGothic',
+                                                  color: Colors.lightBlue,
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 3),
+                                Container(
+                                  alignment: Alignment.center,
+                                  width: MediaQuery.of(context).size.width * 1,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.15,
+                                  child: Stack(children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.symmetric(
+                                              horizontal: BorderSide(
+                                                  color: Colors.black54,
+                                                  width: 0.5))),
+                                      width:
+                                          MediaQuery.of(context).size.width * 1,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              1,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        // expands: true,
+                                        controller: noticeController
+                                            .descriptionController,
+                                        cursorColor: Colors.black,
+                                        validator: (val) {
+                                          if (val!.isEmpty) {
+                                            return '내용을 입력하세요';
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: '내용 입력',
+                                            hintStyle: TextStyle(
+                                                fontFamily: 'SLEIGothic',
+                                                fontSize: 15)),
+                                        onChanged: (val) {
+                                          // noticeController.setDescription();
+                                          _description = noticeController
+                                              .descriptionController.text;
+                                          // setState(() {
+                                          //   _content = val;
+                                          // });
+                                        },
+                                      ),
+                                    ),
+                                  ]),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 8.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                          child: Text('작성일',
+                                              style: TextStyle(
+                                                  fontFamily: 'SLEIGothic',
+                                                  color: Colors.lightBlue,
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                    ],
+                                  ),
+                                  SizedBox(height: 3),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide(
+                                                color: Colors.black54,
+                                                width: 0.5))),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 1,
+                                          child: ListTile(
+                                            title: Row(
+                                              children: [
+                                                Text(
+                                                    "${noticeController.picked.year}-${noticeController.picked.month > 10 ? noticeController.picked.month : '0' + noticeController.picked.month.toString()}-${noticeController.picked.day > 10 ? noticeController.picked.day : '0' + noticeController.picked.day.toString()}",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SLEIGothic',
+                                                        color: Colors.black54)),
+                                                SizedBox(width: 10),
+                                                Icon(Icons.calendar_today,
+                                                    color: Colors.lightBlue)
+                                              ],
+                                            ),
+                                            onTap: () async {
+                                              noticeController
+                                                  .setCreatedAt(context);
+                                              if (noticeController.picked
+                                                  .isAfter(DateTime.now())) {
+                                                alertNotCheckFuturePopup(
+                                                    context);
+                                              } else {
+                                                _createdAt =
+                                                    noticeController.picked;
+                                                // setState(() {
+                                                //   _createdAt = picked;
+                                                // });
 
-                          Map<String, dynamic> noticeData = {
-                            'id': id,
-                            'title': _title,
-                            'description': _description,
-                            'writer': authController.firestoreUser.value!.email,
-                            'read': 0,
-                            'createdAt': DateTime.now()
-                          };
+                                                //
+                                                // // 날짜 바뀌면 해당일자의 질문항목으로 채워주고 해당일자 질문 없으면 기본 질문으로 셋팅
+                                                // print(
+                                                //     '_summitDate.weekday : ${_summitDate.weekday}');
+                                                //
+                                                // switch (_summitDate.weekday) {
+                                                //   case 0:
+                                                //     sundayQuestionSetting();
+                                                //     break;
+                                                //   case 6:
+                                                //     saturdayQuestionSetting();
+                                                //     break;
+                                                //   case 7:
+                                                //     sundayQuestionSetting();
+                                                //     break;
+                                                //   default:
+                                                //     questionSetting();
+                                                //     break;
+                                                // }
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )),
+                          FormVerticalSpace(),
+                          PrimaryButton(
+                            labelText: '작성 완료',
+                            onPressed: () {
+                              var id = DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString();
 
-                          noticeController.addNotice(id, noticeData);
-                          Get.back();
-                        },),
-                        FormVerticalSpace(),
-                      ],
+                              Map<String, dynamic> noticeData = {
+                                'id': id,
+                                'title': _title,
+                                'description': _description,
+                                'writer':
+                                    authController.firestoreUser.value!.email,
+                                'read': 0,
+                                'createdAt': DateTime.now()
+                              };
+
+                              noticeController.addNotice(id, noticeData);
+                              Get.back();
+                            },
+                          ),
+                          FormVerticalSpace(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ) : Center(child: Container(width: MediaQuery.of(context).size.width * 0.1, height: MediaQuery.of(context).size.width * 0.1, child: CircularProgressIndicator())),
-            );
-          }
+                )
+              : Center(
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      height: MediaQuery.of(context).size.width * 0.1,
+                      child: CircularProgressIndicator())),
         );
-      }
-    );
+      });
+    });
   }
 
   // Future<void> deleteImage(String imageFileUrl) async {
@@ -435,10 +449,12 @@ class AddNotice extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('날짜 확인',
-                style: TextStyle(fontFamily: 'SLEIGothic', color: Colors.lightBlue)),
+                style: TextStyle(
+                    fontFamily: 'SLEIGothic', color: Colors.lightBlue)),
             content: Text(
                 "${_createdAt.toString().substring(0, 10)} 이 맞습니까?\n확인을 누르시면 일기 작성이 완료됩니다.",
-                style: TextStyle(fontFamily: 'SLEIGothic', color: Colors.black54)),
+                style:
+                    TextStyle(fontFamily: 'SLEIGothic', color: Colors.black54)),
             actions: [
               TextButton(
                 child: Container(
@@ -492,9 +508,11 @@ class AddNotice extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('날짜 확인',
-                style: TextStyle(fontFamily: 'SLEIGothic', color: Colors.black)),
+                style:
+                    TextStyle(fontFamily: 'SLEIGothic', color: Colors.black)),
             content: Text("미래의 날짜는 선택할 수 없습니다.",
-                style: TextStyle(fontFamily: 'SLEIGothic', color: Colors.black54)),
+                style:
+                    TextStyle(fontFamily: 'SLEIGothic', color: Colors.black54)),
             actions: [
               TextButton(
                 child: Container(
@@ -513,14 +531,14 @@ class AddNotice extends StatelessWidget {
           );
         });
   }
-  //
-  // @override
-  // void dispose() {
-  //   _titleController.dispose();
-  //   super.dispose();
-  // }
-  //
-  // showToast(String msg, {int duration, int gravity}) {
-  //   Toast.show(msg, context, duration: duration, gravity: gravity);
-  // }
+//
+// @override
+// void dispose() {
+//   _titleController.dispose();
+//   super.dispose();
+// }
+//
+// showToast(String msg, {int duration, int gravity}) {
+//   Toast.show(msg, context, duration: duration, gravity: gravity);
+// }
 }
