@@ -1,5 +1,7 @@
 import 'package:foundation/models/menu_option_model.dart';
 
+const MY_WEATHER_API_KEY = '4d427c83fba12042eef81fb325f88b12';
+
 class Globals {
   static final String defaultLanguage = 'en';
 //List of languages that are supported.  Used in selector.

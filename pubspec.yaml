@@ -26,6 +26,9 @@ dependencies:
 
   expandable: ^5.0.1 # 펼치기 기능
   loading_indicator: ^3.0.1 # loading icon
+  geolocator: ^7.4.0 # for get latitude, longitude
+  geocoding: ^2.0.0 # for get address with lat/lng
+  weather: ^2.0.1
   get: ^4.3.4
   get_storage: ^2.0.2
 #  toast:

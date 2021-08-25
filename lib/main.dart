@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         Get.put(AuthController());
         Get.put(ChatController());
         Get.put(NoticeController());
+        Get.put(GeoController());
       }),
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
