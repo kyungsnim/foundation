@@ -46,7 +46,7 @@ class Home extends StatelessWidget {
                           FormVerticalSpace(),
                           PrimaryButton(labelText: '위치/날씨 정보', onPressed: () => Get.toNamed('my_location'),),
                           FormVerticalSpace(),
-                          PrimaryButton(labelText: '설문 조사', onPressed: () => Get.toNamed('research'),),
+                          PrimaryButton(labelText: '설문 조사', onPressed: () => Get.toNamed('research_home'),),
                           FormVerticalSpace(),
                           LabelButton(
                             labelText: '테마변경',

@@ -15,6 +15,7 @@ class AppRoutes {
     GetPage(name: '/phone_auth', page: () => PhoneAuth()),
     GetPage(name: '/chat_room', page: () => ChatRoom()),
     GetPage(name: '/my_location', page: () => MyLocation()),
-    GetPage(name: '/research', page: () => Research()),
+    GetPage(name: '/research_home', page: () => ResearchHome()),
+    GetPage(name: '/research_play', page: () => ResearchPlay()),
   ];
 }

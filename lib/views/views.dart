@@ -10,4 +10,5 @@ export 'my_weather.dart';
 export 'basic_course.dart';
 export 'notice.dart';
 export 'add_notice.dart';
-export 'research.dart';
+export 'research_home.dart';
+export 'research_play.dart';
